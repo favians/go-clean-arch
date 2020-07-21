@@ -1,58 +1,36 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
-	"net/url"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo"
-	"github.com/spf13/viper"
 
 	_articleHttpDelivery "github.com/bxcodec/go-clean-arch/article/delivery/http"
 	_articleHttpDeliveryMiddleware "github.com/bxcodec/go-clean-arch/article/delivery/http/middleware"
 	_articleRepo "github.com/bxcodec/go-clean-arch/article/repository/mysql"
 	_articleUcase "github.com/bxcodec/go-clean-arch/article/usecase"
 	_authorRepo "github.com/bxcodec/go-clean-arch/author/repository/mysql"
+
+	_userHttp "github.com/bxcodec/go-clean-arch/user/delivery"
+	_userRepo "github.com/bxcodec/go-clean-arch/user/repository/mongo"
+	_userUcase "github.com/bxcodec/go-clean-arch/user/usecase"
+
+	_catHttp "github.com/bxcodec/go-clean-arch/cat/delivery"
+	_catRepo "github.com/bxcodec/go-clean-arch/cat/repository/mongo"
+	_catUcase "github.com/bxcodec/go-clean-arch/cat/usecase"
+
+	_loginHttp "github.com/bxcodec/go-clean-arch/login/delivery"
+	_loginUsecase "github.com/bxcodec/go-clean-arch/login/usecase"
+
+	"github.com/bxcodec/go-clean-arch/bootstrap"
 )
 
-func init() {
-	viper.SetConfigFile(`config.json`)
-	err := viper.ReadInConfig()
-	if err != nil {
-		panic(err)
-	}
-
-	if viper.GetBool(`debug`) {
-		log.Println("Service RUN on DEBUG mode")
-	}
-}
-
 func main() {
-	dbHost := viper.GetString(`database.host`)
-	dbPort := viper.GetString(`database.port`)
-	dbUser := viper.GetString(`database.user`)
-	dbPass := viper.GetString(`database.pass`)
-	dbName := viper.GetString(`database.name`)
-	connection := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPass, dbHost, dbPort, dbName)
-	val := url.Values{}
-	val.Add("parseTime", "1")
-	val.Add("loc", "Asia/Jakarta")
-	dsn := fmt.Sprintf("%s?%s", connection, val.Encode())
-	dbConn, err := sql.Open(`mysql`, dsn)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = dbConn.Ping()
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	defer func() {
-		err := dbConn.Close()
+		err := bootstrap.App.MySql.Close()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -61,12 +39,27 @@ func main() {
 	e := echo.New()
 	middL := _articleHttpDeliveryMiddleware.InitMiddleware()
 	e.Use(middL.CORS)
-	authorRepo := _authorRepo.NewMysqlAuthorRepository(dbConn)
-	ar := _articleRepo.NewMysqlArticleRepository(dbConn)
+	authorRepo := _authorRepo.NewMysqlAuthorRepository(bootstrap.App.MySql)
+	ar := _articleRepo.NewMysqlArticleRepository(bootstrap.App.MySql)
 
-	timeoutContext := time.Duration(viper.GetInt("context.timeout")) * time.Second
+	timeoutContext := time.Duration(bootstrap.App.Config.GetInt("context.timeout")) * time.Second
 	au := _articleUcase.NewArticleUsecase(ar, authorRepo, timeoutContext)
 	_articleHttpDelivery.NewArticleHandler(e, au)
 
-	log.Fatal(e.Start(viper.GetString("server.address")))
+	database := bootstrap.App.Mongo.Database(bootstrap.App.Config.GetString("mongo.name"))
+
+	userRepo := _userRepo.NewMongoRepository(database)
+	usrUsecase := _userUcase.NewUserUsecase(userRepo, timeoutContext)
+	_userHttp.NewUserHandler(e, usrUsecase)
+
+	//Handle For login endpoint
+	loginUsecase := _loginUsecase.NewLoginUsecase(userRepo, timeoutContext)
+	_loginHttp.NewLoginHandler(e, loginUsecase)
+
+	catRepo := _catRepo.NewMongoRepository(database)
+	catUsecase := _catUcase.NewCatUsecase(catRepo, timeoutContext)
+	_catHttp.NewCatHandler(e, catUsecase)
+
+	appPort := fmt.Sprintf(":%s", bootstrap.App.Config.GetString("server.address"))
+	log.Fatal(e.Start(appPort))
 }
