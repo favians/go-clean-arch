@@ -6,3 +6,5 @@ _*
 .DS_Store
 engine
 bin/
+cover.html
+coverage.out

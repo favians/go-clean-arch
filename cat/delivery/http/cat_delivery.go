@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/bxcodec/go-clean-arch/cat/delivery/middleware"
+	"github.com/bxcodec/go-clean-arch/cat/delivery/http/middleware"
 	"github.com/bxcodec/go-clean-arch/domain"
 	"github.com/labstack/echo"
 	"go.mongodb.org/mongo-driver/bson"

@@ -14,15 +14,15 @@ import (
 	_articleUcase "github.com/bxcodec/go-clean-arch/article/usecase"
 	_authorRepo "github.com/bxcodec/go-clean-arch/author/repository/mysql"
 
-	_userHttp "github.com/bxcodec/go-clean-arch/user/delivery"
+	_userHttp "github.com/bxcodec/go-clean-arch/user/delivery/http"
 	_userRepo "github.com/bxcodec/go-clean-arch/user/repository/mongo"
 	_userUcase "github.com/bxcodec/go-clean-arch/user/usecase"
 
-	_catHttp "github.com/bxcodec/go-clean-arch/cat/delivery"
+	_catHttp "github.com/bxcodec/go-clean-arch/cat/delivery/http"
 	_catRepo "github.com/bxcodec/go-clean-arch/cat/repository/mongo"
 	_catUcase "github.com/bxcodec/go-clean-arch/cat/usecase"
 
-	_loginHttp "github.com/bxcodec/go-clean-arch/login/delivery"
+	_loginHttp "github.com/bxcodec/go-clean-arch/login/delivery/http"
 	_loginUsecase "github.com/bxcodec/go-clean-arch/login/usecase"
 
 	"github.com/bxcodec/go-clean-arch/bootstrap"
