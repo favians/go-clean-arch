@@ -22,6 +22,8 @@ import (
 	_catRepo "github.com/bxcodec/go-clean-arch/cat/repository/mongo"
 	_catUcase "github.com/bxcodec/go-clean-arch/cat/usecase"
 
+	_jwt "github.com/bxcodec/go-clean-arch/jwt/usecase"
+
 	_loginHttp "github.com/bxcodec/go-clean-arch/login/delivery/http"
 	_loginUsecase "github.com/bxcodec/go-clean-arch/login/usecase"
 
@@ -37,6 +39,14 @@ func main() {
 	}()
 
 	e := echo.New()
+	jwt := _jwt.NewJwtUsecase()
+	userJwt := e.Group("")
+	jwt.SetJwtUser(userJwt)
+	adminJwt := e.Group("")
+	jwt.SetJwtUser(adminJwt)
+	generalJwt := e.Group("")
+	jwt.SetJwtUser(generalJwt)
+
 	middL := _articleHttpDeliveryMiddleware.InitMiddleware()
 	e.Use(middL.CORS)
 	authorRepo := _authorRepo.NewMysqlAuthorRepository(bootstrap.App.MySql)
@@ -58,7 +68,8 @@ func main() {
 
 	catRepo := _catRepo.NewMongoRepository(database)
 	catUsecase := _catUcase.NewCatUsecase(catRepo, timeoutContext)
-	_catHttp.NewCatHandler(e, catUsecase)
+
+	_catHttp.NewCatHandler(e, userJwt, catUsecase)
 
 	appPort := fmt.Sprintf(":%s", bootstrap.App.Config.GetString("server.address"))
 	log.Fatal(e.Start(appPort))
