@@ -39,13 +39,6 @@ func main() {
 	}()
 
 	e := echo.New()
-	jwt := _jwt.NewJwtUsecase()
-	userJwt := e.Group("")
-	jwt.SetJwtUser(userJwt)
-	adminJwt := e.Group("")
-	jwt.SetJwtUser(adminJwt)
-	generalJwt := e.Group("")
-	jwt.SetJwtUser(generalJwt)
 
 	middL := _articleHttpDeliveryMiddleware.InitMiddleware()
 	e.Use(middL.CORS)
@@ -62,6 +55,14 @@ func main() {
 	usrUsecase := _userUcase.NewUserUsecase(userRepo, timeoutContext)
 	_userHttp.NewUserHandler(e, usrUsecase)
 
+	jwt := _jwt.NewJwtUsecase(userRepo, timeoutContext)
+	userJwt := e.Group("")
+	jwt.SetJwtUser(userJwt)
+	adminJwt := e.Group("")
+	jwt.SetJwtUser(adminJwt)
+	generalJwt := e.Group("")
+	jwt.SetJwtUser(generalJwt)
+
 	//Handle For login endpoint
 	loginUsecase := _loginUsecase.NewLoginUsecase(userRepo, timeoutContext)
 	_loginHttp.NewLoginHandler(e, loginUsecase)
@@ -69,7 +70,7 @@ func main() {
 	catRepo := _catRepo.NewMongoRepository(database)
 	catUsecase := _catUcase.NewCatUsecase(catRepo, timeoutContext)
 
-	_catHttp.NewCatHandler(e, userJwt, catUsecase)
+	_catHttp.NewCatHandler(userJwt, catUsecase)
 
 	appPort := fmt.Sprintf(":%s", bootstrap.App.Config.GetString("server.address"))
 	log.Fatal(e.Start(appPort))

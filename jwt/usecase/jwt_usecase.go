@@ -4,9 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/bxcodec/go-clean-arch/bootstrap"
 	"github.com/bxcodec/go-clean-arch/domain"
-	_userRepo "github.com/bxcodec/go-clean-arch/user/repository/mongo"
 )
 
 type jwtUsecase struct {
@@ -14,10 +12,10 @@ type jwtUsecase struct {
 	contextTimeout time.Duration
 }
 
-func NewJwtUsecase() domain.JwtUsecase {
+func NewJwtUsecase(u domain.UserRepository, to time.Duration) domain.JwtUsecase {
 	return &jwtUsecase{
-		userRepo:       _userRepo.NewMongoRepository(bootstrap.App.Mongo.Database(bootstrap.App.Config.GetString("mongo.name"))),
-		contextTimeout: time.Duration(bootstrap.App.Config.GetInt("context.timeout")) * time.Second,
+		userRepo:       u,
+		contextTimeout: to,
 	}
 }
 

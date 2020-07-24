@@ -21,13 +21,13 @@ type CatHandler struct {
 	CatUsecase domain.CatUsecase
 }
 
-func NewCatHandler(e *echo.Echo, userJwt *echo.Group, uu domain.CatUsecase) {
+func NewCatHandler(userJwt *echo.Group, uu domain.CatUsecase) {
 	handler := &CatHandler{
 		CatUsecase: uu,
 	}
 	userJwt.POST("/cat", handler.Store)
-	e.GET("/cat", handler.GetOne)
-	e.GET("/cats", handler.GetAll)
+	userJwt.GET("/cat", handler.GetOne)
+	userJwt.GET("/cats", handler.GetAll)
 	userJwt.PUT("/cat", handler.Update)
 }
 
@@ -68,7 +68,7 @@ func (cat *CatHandler) Store(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(http.StatusCreated, result)
+	return c.JSON(http.StatusOK, result)
 }
 
 func (cat *CatHandler) GetOne(c echo.Context) error {

@@ -66,7 +66,7 @@ func (user *UserHandler) Store(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(http.StatusCreated, result)
+	return c.JSON(http.StatusOK, result)
 }
 
 func (user *UserHandler) GetOne(c echo.Context) error {
