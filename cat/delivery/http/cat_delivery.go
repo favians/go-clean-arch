@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/bxcodec/go-clean-arch/cat/delivery/http/middleware"
 	"github.com/bxcodec/go-clean-arch/domain"
 	"github.com/labstack/echo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -22,16 +21,14 @@ type CatHandler struct {
 	CatUsecase domain.CatUsecase
 }
 
-func NewCatHandler(e *echo.Echo, uu domain.CatUsecase) {
+func NewCatHandler(e *echo.Echo, userJwt *echo.Group, uu domain.CatUsecase) {
 	handler := &CatHandler{
 		CatUsecase: uu,
 	}
-	g := e.Group("")
-	middleware.RequireJwtUser(g)
-	g.POST("/cat", handler.Store)
-	g.GET("/cat", handler.GetOne)
-	g.GET("/cats", handler.GetAll)
-	g.PUT("/cat", handler.Update)
+	userJwt.POST("/cat", handler.Store)
+	e.GET("/cat", handler.GetOne)
+	e.GET("/cats", handler.GetAll)
+	userJwt.PUT("/cat", handler.Update)
 }
 
 func isRequestValid(m *domain.Cat) (bool, error) {

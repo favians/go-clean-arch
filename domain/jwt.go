@@ -2,9 +2,9 @@ package domain
 
 import "github.com/labstack/echo"
 
-type Helpers struct{}
+type Jwt struct{}
 
-type HelpersUsecase interface {
+type JwtUsecase interface {
 	SetJwtAdmin(g *echo.Group)
 	SetJwtUser(g *echo.Group)
 	SetJwtGeneral(g *echo.Group)

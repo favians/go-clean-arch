@@ -9,19 +9,19 @@ import (
 	_userRepo "github.com/bxcodec/go-clean-arch/user/repository/mongo"
 )
 
-type helpersUsecase struct {
+type jwtUsecase struct {
 	userRepo       domain.UserRepository
 	contextTimeout time.Duration
 }
 
-func NewHelpersUsecase() domain.HelpersUsecase {
-	return &helpersUsecase{
+func NewJwtUsecase() domain.JwtUsecase {
+	return &jwtUsecase{
 		userRepo:       _userRepo.NewMongoRepository(bootstrap.App.Mongo.Database(bootstrap.App.Config.GetString("mongo.name"))),
 		contextTimeout: time.Duration(bootstrap.App.Config.GetInt("context.timeout")) * time.Second,
 	}
 }
 
-func (h *helpersUsecase) getOneUser(c context.Context, id string) (*domain.User, error) {
+func (h *jwtUsecase) getOneUser(c context.Context, id string) (*domain.User, error) {
 
 	ctx, cancel := context.WithTimeout(c, h.contextTimeout)
 	defer cancel()

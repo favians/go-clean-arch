@@ -1,46 +1,55 @@
 package http_test
 
 import (
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
+	articleHttp "github.com/bxcodec/go-clean-arch/cat/delivery/http"
 	"github.com/labstack/echo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
-	"github.com/bxcodec/faker"
-	catHttp "github.com/bxcodec/go-clean-arch/cat/delivery/http"
 	"github.com/bxcodec/go-clean-arch/domain"
 	"github.com/bxcodec/go-clean-arch/domain/mocks"
 )
 
 func TestGetOne(t *testing.T) {
-	var mockCat domain.Cat
-	err := faker.FakeData(&mockCat)
-	assert.NoError(t, err)
-
 	mockUCase := new(mocks.CatUsecase)
+	mockCat := &domain.Cat{
+		ID:        primitive.NewObjectID(),
+		Name:      "blacky",
+		Legs:      4,
+		Species:   "kucing item",
+		UpdatedAt: time.Now(),
+		CreatedAt: time.Now(),
+		UserID:    primitive.NewObjectID(),
+	}
 	CatID := mock.Anything
 
-	t.Run("success", func(t *testing.T) {
-		mockUCase.On("GetOne", mock.Anything, CatID).Return(mockCat, nil)
+	mockUCase.On("GetOne", mock.Anything, CatID).Return(mockCat, nil)
 
-		e := echo.New()
-		req, err := http.NewRequest(echo.GET, "/cat", nil)
-		assert.NoError(t, err)
+	e := echo.New()
+	req, err := http.NewRequest(echo.POST, "/cat", nil)
+	assert.NoError(t, err)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
-		rec := httptest.NewRecorder()
-		c := e.NewContext(req, rec)
-		c.SetPath("cat")
-		handler := catHttp.CatHandler{
-			CatUsecase: mockUCase,
-		}
-		err = handler.GetOne(c)
-		require.NoError(t, err)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.SetPath("/cat")
 
-		assert.Equal(t, http.StatusOK, rec.Code)
-		mockUCase.AssertExpectations(t)
-	})
+	handler := articleHttp.CatHandler{
+		CatUsecase: mockUCase,
+	}
+	log.Println(handler)
+
+	err = handler.GetOne(c)
+	require.NoError(t, err)
+
+	assert.Equal(t, http.StatusOK, rec.Code)
+	mockUCase.AssertExpectations(t)
 }
