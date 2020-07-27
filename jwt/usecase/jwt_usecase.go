@@ -8,21 +8,21 @@ import (
 	"github.com/spf13/viper"
 )
 
-type jwtUsecase struct {
+type JwtUsecase struct {
 	UserRepo       domain.UserRepository
 	ContextTimeout time.Duration
 	Config         *viper.Viper
 }
 
 func NewJwtUsecase(u domain.UserRepository, to time.Duration, config *viper.Viper) domain.JwtUsecase {
-	return &jwtUsecase{
+	return &JwtUsecase{
 		UserRepo:       u,
 		ContextTimeout: to,
 		Config:         config,
 	}
 }
 
-func (h *jwtUsecase) getOneUser(c context.Context, id string) (*domain.User, error) {
+func (h *JwtUsecase) getOneUser(c context.Context, id string) (*domain.User, error) {
 
 	ctx, cancel := context.WithTimeout(c, h.ContextTimeout)
 	defer cancel()

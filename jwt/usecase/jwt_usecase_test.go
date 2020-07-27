@@ -13,25 +13,47 @@ import (
 
 func TestSetJwtAdmin(t *testing.T) {
 	mockUserRepo := new(mocks.UserRepository)
-	// mockUser := &domain.User{
-	// 	CreatedAt: time.Now(),
-	// 	ID:        primitive.NewObjectID(),
-	// 	Password:  "password",
-	// 	Username:  "username",
-	// 	UpdatedAt: time.Now(),
-	// }
-	// userID := mock.Anything
 	config := new(viper.Viper)
 
 	t.Run("success", func(t *testing.T) {
-		// mockUserRepo.On("GetOne", mock.Anything, userID).Return(mockUser, nil).Once()
-
 		u := ucase.NewJwtUsecase(mockUserRepo, time.Second*2, config)
 
 		e := echo.New()
 		userJwt := e.Group("")
 
 		u.SetJwtAdmin(userJwt)
+
+		mockUserRepo.AssertExpectations(t)
+	})
+}
+
+func TestSetJwtUser(t *testing.T) {
+	mockUserRepo := new(mocks.UserRepository)
+	config := new(viper.Viper)
+
+	t.Run("success", func(t *testing.T) {
+		u := ucase.NewJwtUsecase(mockUserRepo, time.Second*2, config)
+
+		e := echo.New()
+		userJwt := e.Group("")
+
+		u.SetJwtUser(userJwt)
+
+		mockUserRepo.AssertExpectations(t)
+	})
+}
+
+func TestSetJwtGeneral(t *testing.T) {
+	mockUserRepo := new(mocks.UserRepository)
+	config := new(viper.Viper)
+
+	t.Run("success", func(t *testing.T) {
+		u := ucase.NewJwtUsecase(mockUserRepo, time.Second*2, config)
+
+		e := echo.New()
+		userJwt := e.Group("")
+
+		u.SetJwtGeneral(userJwt)
 
 		mockUserRepo.AssertExpectations(t)
 	})

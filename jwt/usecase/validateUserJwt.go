@@ -10,7 +10,7 @@ import (
 )
 
 //SetJwtUser Set Only JWT for For User
-func (h *jwtUsecase) SetJwtUser(g *echo.Group) {
+func (h *JwtUsecase) SetJwtUser(g *echo.Group) {
 
 	secret := h.Config.GetString("jwt.secret")
 	// validate jwt token
@@ -23,7 +23,7 @@ func (h *jwtUsecase) SetJwtUser(g *echo.Group) {
 	g.Use(h.validateJwtUser)
 }
 
-func (h *jwtUsecase) validateJwtUser(next echo.HandlerFunc) echo.HandlerFunc {
+func (h *JwtUsecase) validateJwtUser(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		user := c.Get("user")
 		token := user.(*jwt.Token)

@@ -9,7 +9,7 @@ import (
 	"github.com/labstack/echo/middleware"
 )
 
-func (h *jwtUsecase) SetJwtGeneral(g *echo.Group) {
+func (h *JwtUsecase) SetJwtGeneral(g *echo.Group) {
 	secret := h.Config.GetString("jwt.secret")
 
 	// validate jwt token
@@ -23,7 +23,7 @@ func (h *jwtUsecase) SetJwtGeneral(g *echo.Group) {
 }
 
 //ValidateGeneralJwt Use this method to Get Data Either ADMIN or MERCHANT
-func (h *jwtUsecase) ValidateGeneralJwt(next echo.HandlerFunc) echo.HandlerFunc {
+func (h *JwtUsecase) ValidateGeneralJwt(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		user := c.Get("user")
 		token := user.(*jwt.Token)

@@ -9,7 +9,7 @@ import (
 )
 
 //SetJwtAdmin Set Only JWT for For Admin
-func (h *jwtUsecase) SetJwtAdmin(g *echo.Group) {
+func (h *JwtUsecase) SetJwtAdmin(g *echo.Group) {
 
 	secret := h.Config.GetString("jwt.secret")
 
@@ -25,7 +25,7 @@ func (h *jwtUsecase) SetJwtAdmin(g *echo.Group) {
 
 // validateJwtAdmin
 // Middleware for validating access to Admin only resources
-func (h *jwtUsecase) validateJwtAdmin(next echo.HandlerFunc) echo.HandlerFunc {
+func (h *JwtUsecase) validateJwtAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 
 		user := c.Get("user")
