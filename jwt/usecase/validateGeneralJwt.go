@@ -4,14 +4,13 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/bxcodec/go-clean-arch/bootstrap"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
 
 func (h *jwtUsecase) SetJwtGeneral(g *echo.Group) {
-	secret := bootstrap.App.Config.GetString("jwt.secret")
+	secret := h.Config.GetString("jwt.secret")
 
 	// validate jwt token
 	g.Use(middleware.JWTWithConfig(middleware.JWTConfig{

@@ -5,26 +5,29 @@ import (
 	"time"
 
 	"github.com/bxcodec/go-clean-arch/domain"
+	"github.com/spf13/viper"
 )
 
 type jwtUsecase struct {
-	userRepo       domain.UserRepository
-	contextTimeout time.Duration
+	UserRepo       domain.UserRepository
+	ContextTimeout time.Duration
+	Config         *viper.Viper
 }
 
-func NewJwtUsecase(u domain.UserRepository, to time.Duration) domain.JwtUsecase {
+func NewJwtUsecase(u domain.UserRepository, to time.Duration, config *viper.Viper) domain.JwtUsecase {
 	return &jwtUsecase{
-		userRepo:       u,
-		contextTimeout: to,
+		UserRepo:       u,
+		ContextTimeout: to,
+		Config:         config,
 	}
 }
 
 func (h *jwtUsecase) getOneUser(c context.Context, id string) (*domain.User, error) {
 
-	ctx, cancel := context.WithTimeout(c, h.contextTimeout)
+	ctx, cancel := context.WithTimeout(c, h.ContextTimeout)
 	defer cancel()
 
-	res, err := h.userRepo.GetOne(ctx, id)
+	res, err := h.UserRepo.GetOne(ctx, id)
 	if err != nil {
 		return res, err
 	}

@@ -2,43 +2,14 @@ package bootstrap
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"log"
-	"net/url"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
-
-func InitMySqlDatabase() *sql.DB {
-	dbHost := App.Config.GetString(`database.host`)
-	dbPort := App.Config.GetString(`database.port`)
-	dbUser := App.Config.GetString(`database.user`)
-	dbPass := App.Config.GetString(`database.pass`)
-	dbName := App.Config.GetString(`database.name`)
-	connection := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPass, dbHost, dbPort, dbName)
-
-	val := url.Values{}
-	val.Add("parseTime", "1")
-	val.Add("loc", "Asia/Jakarta")
-	dsn := fmt.Sprintf("%s?%s", connection, val.Encode())
-
-	dbConn, err := sql.Open(`mysql`, dsn)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = dbConn.Ping()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return dbConn
-}
 
 func InitMongoDatabase() *mongo.Client {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

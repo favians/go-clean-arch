@@ -3,7 +3,6 @@ package usecase
 import (
 	"net/http"
 
-	"github.com/bxcodec/go-clean-arch/bootstrap"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -12,7 +11,7 @@ import (
 //SetJwtAdmin Set Only JWT for For Admin
 func (h *jwtUsecase) SetJwtAdmin(g *echo.Group) {
 
-	secret := bootstrap.App.Config.GetString("jwt.secret")
+	secret := h.Config.GetString("jwt.secret")
 
 	// validate jwt token
 	g.Use(middleware.JWTWithConfig(middleware.JWTConfig{

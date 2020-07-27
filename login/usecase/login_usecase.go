@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/bxcodec/go-clean-arch/domain"
@@ -29,7 +28,6 @@ func (login *loginUsecase) GetUser(c context.Context, username string, password 
 	if err != nil {
 		return res, err
 	}
-	log.Println(res)
 
 	return res, nil
 }

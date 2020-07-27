@@ -24,6 +24,5 @@ func init() {
 func AppInit() {
 	App = &Application{}
 	App.Config = InitConfig()
-	App.MySql = InitMySqlDatabase()
 	App.Mongo = InitMongoDatabase()
 }

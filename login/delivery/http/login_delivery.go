@@ -6,20 +6,23 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/bxcodec/go-clean-arch/bootstrap"
+	"github.com/spf13/viper"
+
 	"github.com/bxcodec/go-clean-arch/domain"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	"gopkg.in/go-playground/validator.v9"
 )
 
-type loginHandler struct {
+type LoginHandler struct {
 	LoginUsecase domain.LoginUsecase
+	Config       *viper.Viper
 }
 
-func NewLoginHandler(e *echo.Echo, lu domain.LoginUsecase) {
-	handler := &loginHandler{
+func NewLoginHandler(e *echo.Echo, lu domain.LoginUsecase, config *viper.Viper) {
+	handler := &LoginHandler{
 		LoginUsecase: lu,
+		Config:       config,
 	}
 	e.POST("/login/admin", handler.CreateJwtAdmin)
 	e.POST("/login", handler.CreateJwtUser)
@@ -34,13 +37,12 @@ func isRequestValid(m *domain.Login) (bool, error) {
 	return true, nil
 }
 
-func (login *loginHandler) CreateJwtUser(c echo.Context) error {
+func (login *LoginHandler) CreateJwtUser(c echo.Context) error {
 
 	var (
 		err          error
 		token        string
 		loginPayload domain.Login
-		lifetime     string = bootstrap.App.Config.GetString("jwt.lifetime")
 	)
 
 	err = c.Bind(&loginPayload)
@@ -62,7 +64,13 @@ func (login *loginHandler) CreateJwtUser(c echo.Context) error {
 		return c.String(http.StatusUnauthorized, "Your username or password were wrong")
 	}
 
-	token, err = createJwtToken(res.ID.Hex(), "user")
+	lifetime, err := strconv.ParseInt(login.Config.GetString("jwt.lifetime"), 10, 64)
+	if err != nil {
+		lifetime = 60
+	}
+
+	secret := login.Config.GetString("jwt.secret")
+	token, err = createJwtToken(res.ID.Hex(), "user", lifetime, secret)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, "something went wrong")
 	}
@@ -74,13 +82,12 @@ func (login *loginHandler) CreateJwtUser(c echo.Context) error {
 
 }
 
-func (login *loginHandler) CreateJwtAdmin(c echo.Context) error {
+func (login *LoginHandler) CreateJwtAdmin(c echo.Context) error {
 
 	var (
 		err          error
 		token        string
 		loginPayload domain.Login
-		lifetime     string = bootstrap.App.Config.GetString("jwt.lifetime")
 	)
 
 	err = c.Bind(&loginPayload)
@@ -97,11 +104,17 @@ func (login *loginHandler) CreateJwtAdmin(c echo.Context) error {
 		ctx = context.Background()
 	}
 
-	adminUsername, adminPassword := bootstrap.App.Config.GetString("admin.username"), bootstrap.App.Config.GetString("admin.password")
+	adminUsername, adminPassword := login.Config.GetString("admin.username"), login.Config.GetString("admin.password")
 
 	if loginPayload.Username == adminUsername && loginPayload.Password == adminPassword {
 		// create jwt token
-		token, err = createJwtToken(adminUsername, "admin")
+		lifetime, err := strconv.ParseInt(login.Config.GetString("jwt.lifetime"), 10, 64)
+		if err != nil {
+			lifetime = 60
+		}
+
+		secret := login.Config.GetString("jwt.secret")
+		token, err = createJwtToken(adminUsername, "admin", lifetime, secret)
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "something went wrong")
 		}
@@ -115,7 +128,7 @@ func (login *loginHandler) CreateJwtAdmin(c echo.Context) error {
 	return c.String(http.StatusUnauthorized, "Your username or password were wrong")
 }
 
-func createJwtToken(uname string, jtype string) (string, error) {
+func createJwtToken(uname string, jtype string, lifetime int64, secret string) (string, error) {
 
 	type JwtClaims struct {
 		Name    string `json:"name"`
@@ -123,7 +136,7 @@ func createJwtToken(uname string, jtype string) (string, error) {
 		jwt.StandardClaims
 	}
 
-	getLifeTime, _ := strconv.ParseInt(bootstrap.App.Config.GetString("jwt.lifetime"), 10, 64)
+	getLifeTime := lifetime
 	getTime := time.Duration(getLifeTime)
 
 	var (
@@ -151,7 +164,6 @@ func createJwtToken(uname string, jtype string) (string, error) {
 		}
 	}
 
-	secret := bootstrap.App.Config.GetString("jwt.secret")
 	rawToken := jwt.NewWithClaims(jwt.SigningMethodHS512, claim)
 	token, err := rawToken.SignedString([]byte(secret))
 	if err != nil {

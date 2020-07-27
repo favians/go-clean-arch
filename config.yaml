@@ -8,13 +8,6 @@ server:
 context:
   timeout: 2
 
-database: 
-  host: localhost
-  port: 3306
-  user: root
-  pass: yourpassword
-  name: article
-
 mongo: 
   host: localhost
   port: 27017
