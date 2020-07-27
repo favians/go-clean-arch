@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	articleHttp "github.com/bxcodec/go-clean-arch/cat/delivery/http"
+	catHttp "github.com/bxcodec/go-clean-arch/cat/delivery/http"
 	"github.com/labstack/echo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -56,7 +56,7 @@ func TestStore(t *testing.T) {
 	c.SetPath("/cat")
 	c.Set("user", mockUser)
 
-	handler := articleHttp.CatHandler{
+	handler := catHttp.CatHandler{
 		CatUsecase: mockUCase,
 	}
 
@@ -94,7 +94,7 @@ func TestStoreFailed(t *testing.T) {
 	c.SetPath("/cat")
 	c.Set("user", mockUser)
 
-	handler := articleHttp.CatHandler{
+	handler := catHttp.CatHandler{
 		CatUsecase: mockUCase,
 	}
 
@@ -129,7 +129,7 @@ func TestGetOne(t *testing.T) {
 	c := e.NewContext(req, rec)
 	c.SetPath("/cat")
 
-	handler := articleHttp.CatHandler{
+	handler := catHttp.CatHandler{
 		CatUsecase: mockUCase,
 	}
 	log.Println(handler)
@@ -157,7 +157,7 @@ func TestGetOneFailed(t *testing.T) {
 	c := e.NewContext(req, rec)
 	c.SetPath("/cat")
 
-	handler := articleHttp.CatHandler{
+	handler := catHttp.CatHandler{
 		CatUsecase: mockUCase,
 	}
 	log.Println(handler)
@@ -206,7 +206,7 @@ func TestUpdate(t *testing.T) {
 	c.SetPath("/cat")
 	c.Set("user", mockUser)
 
-	handler := articleHttp.CatHandler{
+	handler := catHttp.CatHandler{
 		CatUsecase: mockUCase,
 	}
 
@@ -246,7 +246,7 @@ func TestUpdateFailed(t *testing.T) {
 	c.SetPath("/cat")
 	c.Set("user", mockUser)
 
-	handler := articleHttp.CatHandler{
+	handler := catHttp.CatHandler{
 		CatUsecase: mockUCase,
 	}
 
@@ -287,7 +287,7 @@ func TestGetAll(t *testing.T) {
 	c := e.NewContext(req, rec)
 	c.SetPath("/cats")
 
-	handler := articleHttp.CatHandler{
+	handler := catHttp.CatHandler{
 		CatUsecase: mockUCase,
 	}
 	log.Println(handler)
@@ -319,7 +319,7 @@ func TestGetAllFailed(t *testing.T) {
 	c := e.NewContext(req, rec)
 	c.SetPath("/cats")
 
-	handler := articleHttp.CatHandler{
+	handler := catHttp.CatHandler{
 		CatUsecase: mockUCase,
 	}
 	log.Println(handler)
