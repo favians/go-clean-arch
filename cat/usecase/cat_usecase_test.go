@@ -16,7 +16,7 @@ import (
 	"github.com/bxcodec/go-clean-arch/domain/mocks"
 )
 
-func TestStore(t *testing.T) {
+func TestInsertOne(t *testing.T) {
 	mockCatRepo := new(mocks.CatRepository)
 	mockCat := &domain.Cat{
 		Name:    "blacky",
@@ -27,10 +27,10 @@ func TestStore(t *testing.T) {
 	mockEmptyCat := &domain.Cat{}
 
 	t.Run("success", func(t *testing.T) {
-		mockCatRepo.On("Store", mock.Anything, mock.Anything).Return(mockCat, nil).Once()
+		mockCatRepo.On("InsertOne", mock.Anything, mock.Anything).Return(mockCat, nil).Once()
 		u := ucase.NewCatUsecase(mockCatRepo, time.Second*2)
 
-		a, err := u.Store(context.TODO(), mockCat)
+		a, err := u.InsertOne(context.TODO(), mockCat)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, a)
@@ -38,11 +38,11 @@ func TestStore(t *testing.T) {
 		mockCatRepo.AssertExpectations(t)
 	})
 	t.Run("error-failed", func(t *testing.T) {
-		mockCatRepo.On("Store", mock.Anything, mock.Anything).Return(mockEmptyCat, errors.New("Unexpected")).Once()
+		mockCatRepo.On("InsertOne", mock.Anything, mock.Anything).Return(mockEmptyCat, errors.New("Unexpected")).Once()
 
 		u := ucase.NewCatUsecase(mockCatRepo, time.Second*2)
 
-		a, err := u.Store(context.TODO(), mockCat)
+		a, err := u.InsertOne(context.TODO(), mockCat)
 
 		assert.Error(t, err)
 		assert.Equal(t, mockEmptyCat, a)
@@ -52,7 +52,7 @@ func TestStore(t *testing.T) {
 
 }
 
-func TestGetOne(t *testing.T) {
+func TestFindOne(t *testing.T) {
 	mockCatRepo := new(mocks.CatRepository)
 	mockCat := &domain.Cat{
 		ID:        primitive.NewObjectID(),
@@ -67,10 +67,10 @@ func TestGetOne(t *testing.T) {
 	CatID := mock.Anything
 
 	t.Run("success", func(t *testing.T) {
-		mockCatRepo.On("GetOne", mock.Anything, mock.Anything).Return(mockCat, nil).Once()
+		mockCatRepo.On("FindOne", mock.Anything, mock.Anything).Return(mockCat, nil).Once()
 		u := ucase.NewCatUsecase(mockCatRepo, time.Second*2)
 
-		a, err := u.GetOne(context.TODO(), CatID)
+		a, err := u.FindOne(context.TODO(), CatID)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, a)
@@ -78,11 +78,11 @@ func TestGetOne(t *testing.T) {
 		mockCatRepo.AssertExpectations(t)
 	})
 	t.Run("error-failed", func(t *testing.T) {
-		mockCatRepo.On("GetOne", mock.Anything, mock.Anything).Return(mockEmptyCat, errors.New("Unexpected")).Once()
+		mockCatRepo.On("FindOne", mock.Anything, mock.Anything).Return(mockEmptyCat, errors.New("Unexpected")).Once()
 
 		u := ucase.NewCatUsecase(mockCatRepo, time.Second*2)
 
-		a, err := u.GetOne(context.TODO(), CatID)
+		a, err := u.FindOne(context.TODO(), CatID)
 
 		assert.Error(t, err)
 		assert.Equal(t, mockEmptyCat, a)
@@ -143,7 +143,7 @@ func TestGetAllWithPage(t *testing.T) {
 
 }
 
-func TestUpdate(t *testing.T) {
+func TestUpdateOne(t *testing.T) {
 	mockCatRepo := new(mocks.CatRepository)
 	mockCat := &domain.Cat{
 		ID:        primitive.NewObjectID(),
@@ -158,10 +158,10 @@ func TestUpdate(t *testing.T) {
 	CatID := mock.Anything
 
 	t.Run("success", func(t *testing.T) {
-		mockCatRepo.On("Update", mock.Anything, mock.Anything).Return(mockCat, nil).Once()
+		mockCatRepo.On("UpdateOne", mock.Anything, mock.Anything).Return(mockCat, nil).Once()
 		u := ucase.NewCatUsecase(mockCatRepo, time.Second*2)
 
-		a, err := u.Update(context.TODO(), mockCat, CatID)
+		a, err := u.UpdateOne(context.TODO(), mockCat, CatID)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, a)
@@ -169,11 +169,11 @@ func TestUpdate(t *testing.T) {
 		mockCatRepo.AssertExpectations(t)
 	})
 	t.Run("error-failed", func(t *testing.T) {
-		mockCatRepo.On("Update", mock.Anything, mock.Anything).Return(mockEmptyCat, errors.New("Unexpected")).Once()
+		mockCatRepo.On("UpdateOne", mock.Anything, mock.Anything).Return(mockEmptyCat, errors.New("Unexpected")).Once()
 
 		u := ucase.NewCatUsecase(mockCatRepo, time.Second*2)
 
-		a, err := u.Update(context.TODO(), mockCat, CatID)
+		a, err := u.UpdateOne(context.TODO(), mockCat, CatID)
 
 		assert.Error(t, err)
 		assert.Equal(t, mockEmptyCat, a)

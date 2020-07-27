@@ -25,10 +25,10 @@ func NewCatHandler(userJwt *echo.Group, uu domain.CatUsecase) {
 	handler := &CatHandler{
 		CatUsecase: uu,
 	}
-	userJwt.POST("/cat", handler.Store)
-	userJwt.GET("/cat", handler.GetOne)
+	userJwt.POST("/cat", handler.InsertOne)
+	userJwt.GET("/cat", handler.FindOne)
 	userJwt.GET("/cats", handler.GetAll)
-	userJwt.PUT("/cat", handler.Update)
+	userJwt.PUT("/cat", handler.UpdateOne)
 }
 
 func isRequestValid(m *domain.Cat) (bool, error) {
@@ -40,7 +40,7 @@ func isRequestValid(m *domain.Cat) (bool, error) {
 	return true, nil
 }
 
-func (cat *CatHandler) Store(c echo.Context) error {
+func (cat *CatHandler) InsertOne(c echo.Context) error {
 	var (
 		ct  domain.Cat
 		err error
@@ -63,7 +63,7 @@ func (cat *CatHandler) Store(c echo.Context) error {
 	}
 
 	ct.UserID = token.ID
-	result, err := cat.CatUsecase.Store(ctx, &ct)
+	result, err := cat.CatUsecase.InsertOne(ctx, &ct)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -71,7 +71,7 @@ func (cat *CatHandler) Store(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func (cat *CatHandler) GetOne(c echo.Context) error {
+func (cat *CatHandler) FindOne(c echo.Context) error {
 
 	id := c.QueryParam("id")
 
@@ -80,7 +80,7 @@ func (cat *CatHandler) GetOne(c echo.Context) error {
 		ctx = context.Background()
 	}
 
-	result, err := cat.CatUsecase.GetOne(ctx, id)
+	result, err := cat.CatUsecase.FindOne(ctx, id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -140,7 +140,7 @@ func (cat *CatHandler) GetAll(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func (cat *CatHandler) Update(c echo.Context) error {
+func (cat *CatHandler) UpdateOne(c echo.Context) error {
 
 	id := c.QueryParam("id")
 
@@ -159,7 +159,7 @@ func (cat *CatHandler) Update(c echo.Context) error {
 		ctx = context.Background()
 	}
 
-	result, err := cat.CatUsecase.Update(ctx, &ct, id)
+	result, err := cat.CatUsecase.UpdateOne(ctx, &ct, id)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}

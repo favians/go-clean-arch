@@ -21,7 +21,7 @@ import (
 	"github.com/bxcodec/go-clean-arch/domain/mocks"
 )
 
-func TestStore(t *testing.T) {
+func TestInsertOne(t *testing.T) {
 	mockUCase := new(mocks.CatUsecase)
 	mockCatRequest := &domain.Cat{
 		Name:    "blacky",
@@ -44,7 +44,7 @@ func TestStore(t *testing.T) {
 	j, err := json.Marshal(tempMockCat)
 	assert.NoError(t, err)
 
-	mockUCase.On("Store", mock.Anything, mock.AnythingOfType("*domain.Cat")).Return(mockCatResponse, nil)
+	mockUCase.On("InsertOne", mock.Anything, mock.AnythingOfType("*domain.Cat")).Return(mockCatResponse, nil)
 
 	e := echo.New()
 	req, err := http.NewRequest(echo.POST, "/cat", strings.NewReader(string(j)))
@@ -60,14 +60,14 @@ func TestStore(t *testing.T) {
 		CatUsecase: mockUCase,
 	}
 
-	err = handler.Store(c)
+	err = handler.InsertOne(c)
 	require.NoError(t, err)
 
 	assert.Equal(t, http.StatusOK, rec.Code)
 	mockUCase.AssertExpectations(t)
 }
 
-func TestStoreFailed(t *testing.T) {
+func TestInsertOneFailed(t *testing.T) {
 	mockUCase := new(mocks.CatUsecase)
 	mockCatRequest := &domain.Cat{
 		Name:    "blacky",
@@ -82,7 +82,7 @@ func TestStoreFailed(t *testing.T) {
 	j, err := json.Marshal(tempMockCat)
 	assert.NoError(t, err)
 
-	mockUCase.On("Store", mock.Anything, mock.AnythingOfType("*domain.Cat")).Return(mockCatResponse, errors.New("Unexpected"))
+	mockUCase.On("InsertOne", mock.Anything, mock.AnythingOfType("*domain.Cat")).Return(mockCatResponse, errors.New("Unexpected"))
 
 	e := echo.New()
 	req, err := http.NewRequest(echo.POST, "/cat", strings.NewReader(string(j)))
@@ -98,14 +98,14 @@ func TestStoreFailed(t *testing.T) {
 		CatUsecase: mockUCase,
 	}
 
-	err = handler.Store(c)
+	err = handler.InsertOne(c)
 	require.NoError(t, err)
 
 	assert.Equal(t, http.StatusInternalServerError, rec.Code)
 	mockUCase.AssertExpectations(t)
 }
 
-func TestGetOne(t *testing.T) {
+func TestFindOne(t *testing.T) {
 	mockUCase := new(mocks.CatUsecase)
 	mockCat := &domain.Cat{
 		ID:        primitive.NewObjectID(),
@@ -118,7 +118,7 @@ func TestGetOne(t *testing.T) {
 	}
 	CatID := mock.Anything
 
-	mockUCase.On("GetOne", mock.Anything, CatID).Return(mockCat, nil)
+	mockUCase.On("FindOne", mock.Anything, CatID).Return(mockCat, nil)
 
 	e := echo.New()
 	req, err := http.NewRequest(echo.GET, "/cat", nil)
@@ -134,19 +134,19 @@ func TestGetOne(t *testing.T) {
 	}
 	log.Println(handler)
 
-	err = handler.GetOne(c)
+	err = handler.FindOne(c)
 	require.NoError(t, err)
 
 	assert.Equal(t, http.StatusOK, rec.Code)
 	mockUCase.AssertExpectations(t)
 }
 
-func TestGetOneFailed(t *testing.T) {
+func TestFindOneFailed(t *testing.T) {
 	mockUCase := new(mocks.CatUsecase)
 	mockCatFailed := &domain.Cat{}
 	CatID := mock.Anything
 
-	mockUCase.On("GetOne", mock.Anything, CatID).Return(mockCatFailed, errors.New("Unexpected"))
+	mockUCase.On("FindOne", mock.Anything, CatID).Return(mockCatFailed, errors.New("Unexpected"))
 
 	e := echo.New()
 	req, err := http.NewRequest(echo.GET, "/cat", nil)
@@ -162,14 +162,14 @@ func TestGetOneFailed(t *testing.T) {
 	}
 	log.Println(handler)
 
-	err = handler.GetOne(c)
+	err = handler.FindOne(c)
 	require.NoError(t, err)
 
 	assert.Equal(t, http.StatusInternalServerError, rec.Code)
 	mockUCase.AssertExpectations(t)
 }
 
-func TestUpdate(t *testing.T) {
+func TestUpdateOne(t *testing.T) {
 	mockUCase := new(mocks.CatUsecase)
 	mockCatRequest := &domain.Cat{
 		Name:    "blacky",
@@ -194,7 +194,7 @@ func TestUpdate(t *testing.T) {
 	j, err := json.Marshal(tempMockCat)
 	assert.NoError(t, err)
 
-	mockUCase.On("Update", mock.Anything, mock.AnythingOfType("*domain.Cat"), CatID).Return(mockCatResponse, nil)
+	mockUCase.On("UpdateOne", mock.Anything, mock.AnythingOfType("*domain.Cat"), CatID).Return(mockCatResponse, nil)
 
 	e := echo.New()
 	req, err := http.NewRequest(echo.PUT, "/cat", strings.NewReader(string(j)))
@@ -210,14 +210,14 @@ func TestUpdate(t *testing.T) {
 		CatUsecase: mockUCase,
 	}
 
-	err = handler.Update(c)
+	err = handler.UpdateOne(c)
 	require.NoError(t, err)
 
 	assert.Equal(t, http.StatusOK, rec.Code)
 	mockUCase.AssertExpectations(t)
 }
 
-func TestUpdateFailed(t *testing.T) {
+func TestUpdateOneFailed(t *testing.T) {
 	mockUCase := new(mocks.CatUsecase)
 	mockCatRequest := &domain.Cat{
 		Name:    "blacky",
@@ -234,7 +234,7 @@ func TestUpdateFailed(t *testing.T) {
 	j, err := json.Marshal(tempMockCat)
 	assert.NoError(t, err)
 
-	mockUCase.On("Update", mock.Anything, mock.AnythingOfType("*domain.Cat"), CatID).Return(mockCatResponse, errors.New("Unexpected"))
+	mockUCase.On("UpdateOne", mock.Anything, mock.AnythingOfType("*domain.Cat"), CatID).Return(mockCatResponse, errors.New("Unexpected"))
 
 	e := echo.New()
 	req, err := http.NewRequest(echo.PUT, "/cat", strings.NewReader(string(j)))
@@ -250,7 +250,7 @@ func TestUpdateFailed(t *testing.T) {
 		CatUsecase: mockUCase,
 	}
 
-	err = handler.Update(c)
+	err = handler.UpdateOne(c)
 	require.NoError(t, err)
 
 	assert.Equal(t, http.StatusInternalServerError, rec.Code)

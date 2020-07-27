@@ -27,7 +27,7 @@ func (h *JwtUsecase) getOneUser(c context.Context, id string) (*domain.User, err
 	ctx, cancel := context.WithTimeout(c, h.ContextTimeout)
 	defer cancel()
 
-	res, err := h.UserRepo.GetOne(ctx, id)
+	res, err := h.UserRepo.FindOne(ctx, id)
 	if err != nil {
 		return res, err
 	}

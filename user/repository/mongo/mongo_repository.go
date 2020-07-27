@@ -27,7 +27,7 @@ func NewMongoRepository(DB *mongo.Database) domain.UserRepository {
 	return &mongoRepository{DB, DB.Collection(collectionName)}
 }
 
-func (m *mongoRepository) Store(ctx context.Context, user *domain.User) (*domain.User, error) {
+func (m *mongoRepository) InsertOne(ctx context.Context, user *domain.User) (*domain.User, error) {
 	var (
 		err error
 	)
@@ -40,7 +40,7 @@ func (m *mongoRepository) Store(ctx context.Context, user *domain.User) (*domain
 	return user, nil
 }
 
-func (m *mongoRepository) GetOne(ctx context.Context, id string) (*domain.User, error) {
+func (m *mongoRepository) FindOne(ctx context.Context, id string) (*domain.User, error) {
 	var (
 		user *domain.User
 		err  error
@@ -106,7 +106,7 @@ func (m *mongoRepository) GetAllWithPage(ctx context.Context, rp int64, p int64,
 	return permissions, count, err
 }
 
-func (m *mongoRepository) Update(ctx context.Context, user *domain.User, id string) (*domain.User, error) {
+func (m *mongoRepository) UpdateOne(ctx context.Context, user *domain.User, id string) (*domain.User, error) {
 	var (
 		err error
 	)

@@ -14,6 +14,29 @@ type UserUsecase struct {
 	mock.Mock
 }
 
+// FindOne provides a mock function with given fields: ctx, id
+func (_m *UserUsecase) FindOne(ctx context.Context, id string) (*domain.User, error) {
+	ret := _m.Called(ctx, id)
+
+	var r0 *domain.User
+	if rf, ok := ret.Get(0).(func(context.Context, string) *domain.User); ok {
+		r0 = rf(ctx, id)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*domain.User)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetAllWithPage provides a mock function with given fields: ctx, rp, p, filter, setsort
 func (_m *UserUsecase) GetAllWithPage(ctx context.Context, rp int64, p int64, filter interface{}, setsort interface{}) ([]domain.User, int64, error) {
 	ret := _m.Called(ctx, rp, p, filter, setsort)
@@ -44,31 +67,8 @@ func (_m *UserUsecase) GetAllWithPage(ctx context.Context, rp int64, p int64, fi
 	return r0, r1, r2
 }
 
-// GetOne provides a mock function with given fields: ctx, id
-func (_m *UserUsecase) GetOne(ctx context.Context, id string) (*domain.User, error) {
-	ret := _m.Called(ctx, id)
-
-	var r0 *domain.User
-	if rf, ok := ret.Get(0).(func(context.Context, string) *domain.User); ok {
-		r0 = rf(ctx, id)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*domain.User)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
-		r1 = rf(ctx, id)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// Store provides a mock function with given fields: ctx, u
-func (_m *UserUsecase) Store(ctx context.Context, u *domain.User) (*domain.User, error) {
+// InsertOne provides a mock function with given fields: ctx, u
+func (_m *UserUsecase) InsertOne(ctx context.Context, u *domain.User) (*domain.User, error) {
 	ret := _m.Called(ctx, u)
 
 	var r0 *domain.User
@@ -90,8 +90,8 @@ func (_m *UserUsecase) Store(ctx context.Context, u *domain.User) (*domain.User,
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: ctx, user, id
-func (_m *UserUsecase) Update(ctx context.Context, user *domain.User, id string) (*domain.User, error) {
+// UpdateOne provides a mock function with given fields: ctx, user, id
+func (_m *UserUsecase) UpdateOne(ctx context.Context, user *domain.User, id string) (*domain.User, error) {
 	ret := _m.Called(ctx, user, id)
 
 	var r0 *domain.User

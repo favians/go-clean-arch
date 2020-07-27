@@ -14,6 +14,29 @@ type CatRepository struct {
 	mock.Mock
 }
 
+// FindOne provides a mock function with given fields: ctx, id
+func (_m *CatRepository) FindOne(ctx context.Context, id string) (*domain.Cat, error) {
+	ret := _m.Called(ctx, id)
+
+	var r0 *domain.Cat
+	if rf, ok := ret.Get(0).(func(context.Context, string) *domain.Cat); ok {
+		r0 = rf(ctx, id)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*domain.Cat)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetAllWithPage provides a mock function with given fields: ctx, rp, p, filter, setsort
 func (_m *CatRepository) GetAllWithPage(ctx context.Context, rp int64, p int64, filter interface{}, setsort interface{}) ([]domain.Cat, int64, error) {
 	ret := _m.Called(ctx, rp, p, filter, setsort)
@@ -44,31 +67,8 @@ func (_m *CatRepository) GetAllWithPage(ctx context.Context, rp int64, p int64, 
 	return r0, r1, r2
 }
 
-// GetOne provides a mock function with given fields: ctx, id
-func (_m *CatRepository) GetOne(ctx context.Context, id string) (*domain.Cat, error) {
-	ret := _m.Called(ctx, id)
-
-	var r0 *domain.Cat
-	if rf, ok := ret.Get(0).(func(context.Context, string) *domain.Cat); ok {
-		r0 = rf(ctx, id)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*domain.Cat)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
-		r1 = rf(ctx, id)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// Store provides a mock function with given fields: ctx, u
-func (_m *CatRepository) Store(ctx context.Context, u *domain.Cat) (*domain.Cat, error) {
+// InsertOne provides a mock function with given fields: ctx, u
+func (_m *CatRepository) InsertOne(ctx context.Context, u *domain.Cat) (*domain.Cat, error) {
 	ret := _m.Called(ctx, u)
 
 	var r0 *domain.Cat
@@ -90,8 +90,8 @@ func (_m *CatRepository) Store(ctx context.Context, u *domain.Cat) (*domain.Cat,
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: ctx, cat, id
-func (_m *CatRepository) Update(ctx context.Context, cat *domain.Cat, id string) (*domain.Cat, error) {
+// UpdateOne provides a mock function with given fields: ctx, cat, id
+func (_m *CatRepository) UpdateOne(ctx context.Context, cat *domain.Cat, id string) (*domain.Cat, error) {
 	ret := _m.Called(ctx, cat, id)
 
 	var r0 *domain.Cat

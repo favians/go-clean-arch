@@ -16,7 +16,7 @@ import (
 	ucase "github.com/bxcodec/go-clean-arch/user/usecase"
 )
 
-func TestStore(t *testing.T) {
+func TestInsertOne(t *testing.T) {
 	mockUserRepo := new(mocks.UserRepository)
 	mockUser := &domain.User{
 		Name:     "vian",
@@ -26,10 +26,10 @@ func TestStore(t *testing.T) {
 	mockEmptyUser := &domain.User{}
 
 	t.Run("success", func(t *testing.T) {
-		mockUserRepo.On("Store", mock.Anything, mock.AnythingOfType("*domain.User")).Return(mockUser, nil).Once()
+		mockUserRepo.On("InsertOne", mock.Anything, mock.AnythingOfType("*domain.User")).Return(mockUser, nil).Once()
 		u := ucase.NewUserUsecase(mockUserRepo, time.Second*2)
 
-		a, err := u.Store(context.TODO(), mockUser)
+		a, err := u.InsertOne(context.TODO(), mockUser)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, a)
@@ -37,11 +37,11 @@ func TestStore(t *testing.T) {
 		mockUserRepo.AssertExpectations(t)
 	})
 	t.Run("error-failed", func(t *testing.T) {
-		mockUserRepo.On("Store", mock.Anything, mock.AnythingOfType("*domain.User")).Return(mockEmptyUser, errors.New("Unexpected")).Once()
+		mockUserRepo.On("InsertOne", mock.Anything, mock.AnythingOfType("*domain.User")).Return(mockEmptyUser, errors.New("Unexpected")).Once()
 
 		u := ucase.NewUserUsecase(mockUserRepo, time.Second*2)
 
-		a, err := u.Store(context.TODO(), mockUser)
+		a, err := u.InsertOne(context.TODO(), mockUser)
 
 		assert.Error(t, err)
 		assert.Equal(t, mockEmptyUser, a)
@@ -51,7 +51,7 @@ func TestStore(t *testing.T) {
 
 }
 
-func TestGetOne(t *testing.T) {
+func TestFindOne(t *testing.T) {
 	mockUserRepo := new(mocks.UserRepository)
 	mockUser := &domain.User{
 		ID:        primitive.NewObjectID(),
@@ -65,10 +65,10 @@ func TestGetOne(t *testing.T) {
 	UserID := mock.Anything
 
 	t.Run("success", func(t *testing.T) {
-		mockUserRepo.On("GetOne", mock.Anything, mock.Anything).Return(mockUser, nil).Once()
+		mockUserRepo.On("FindOne", mock.Anything, mock.Anything).Return(mockUser, nil).Once()
 		u := ucase.NewUserUsecase(mockUserRepo, time.Second*2)
 
-		a, err := u.GetOne(context.TODO(), UserID)
+		a, err := u.FindOne(context.TODO(), UserID)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, a)
@@ -76,11 +76,11 @@ func TestGetOne(t *testing.T) {
 		mockUserRepo.AssertExpectations(t)
 	})
 	t.Run("error-failed", func(t *testing.T) {
-		mockUserRepo.On("GetOne", mock.Anything, mock.Anything).Return(mockEmptyUser, errors.New("Unexpected")).Once()
+		mockUserRepo.On("FindOne", mock.Anything, mock.Anything).Return(mockEmptyUser, errors.New("Unexpected")).Once()
 
 		u := ucase.NewUserUsecase(mockUserRepo, time.Second*2)
 
-		a, err := u.GetOne(context.TODO(), UserID)
+		a, err := u.FindOne(context.TODO(), UserID)
 
 		assert.Error(t, err)
 		assert.Equal(t, mockEmptyUser, a)
@@ -145,7 +145,7 @@ func TestGetAllWithPage(t *testing.T) {
 
 }
 
-func TestUpdate(t *testing.T) {
+func TestUpdateOne(t *testing.T) {
 	mockUserRepo := new(mocks.UserRepository)
 	mockUser := &domain.User{
 		ID:        primitive.NewObjectID(),
@@ -159,10 +159,10 @@ func TestUpdate(t *testing.T) {
 	UserID := mock.Anything
 
 	t.Run("success", func(t *testing.T) {
-		mockUserRepo.On("Update", mock.Anything, mock.Anything).Return(mockUser, nil).Once()
+		mockUserRepo.On("UpdateOne", mock.Anything, mock.Anything).Return(mockUser, nil).Once()
 		u := ucase.NewUserUsecase(mockUserRepo, time.Second*2)
 
-		a, err := u.Update(context.TODO(), mockUser, UserID)
+		a, err := u.UpdateOne(context.TODO(), mockUser, UserID)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, a)
@@ -170,11 +170,11 @@ func TestUpdate(t *testing.T) {
 		mockUserRepo.AssertExpectations(t)
 	})
 	t.Run("error-failed", func(t *testing.T) {
-		mockUserRepo.On("Update", mock.Anything, mock.Anything).Return(mockEmptyUser, errors.New("Unexpected")).Once()
+		mockUserRepo.On("UpdateOne", mock.Anything, mock.Anything).Return(mockEmptyUser, errors.New("Unexpected")).Once()
 
 		u := ucase.NewUserUsecase(mockUserRepo, time.Second*2)
 
-		a, err := u.Update(context.TODO(), mockUser, UserID)
+		a, err := u.UpdateOne(context.TODO(), mockUser, UserID)
 
 		assert.Error(t, err)
 		assert.Equal(t, mockEmptyUser, a)

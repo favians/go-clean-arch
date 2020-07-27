@@ -18,15 +18,15 @@ type Cat struct {
 }
 
 type CatRepository interface {
-	Store(ctx context.Context, u *Cat) (*Cat, error)
-	GetOne(ctx context.Context, id string) (*Cat, error)
+	InsertOne(ctx context.Context, u *Cat) (*Cat, error)
+	FindOne(ctx context.Context, id string) (*Cat, error)
 	GetAllWithPage(ctx context.Context, rp int64, p int64, filter interface{}, setsort interface{}) ([]Cat, int64, error)
-	Update(ctx context.Context, cat *Cat, id string) (*Cat, error)
+	UpdateOne(ctx context.Context, cat *Cat, id string) (*Cat, error)
 }
 
 type CatUsecase interface {
-	Store(ctx context.Context, u *Cat) (*Cat, error)
-	GetOne(ctx context.Context, id string) (*Cat, error)
+	InsertOne(ctx context.Context, u *Cat) (*Cat, error)
+	FindOne(ctx context.Context, id string) (*Cat, error)
 	GetAllWithPage(ctx context.Context, rp int64, p int64, filter interface{}, setsort interface{}) ([]Cat, int64, error)
-	Update(ctx context.Context, cat *Cat, id string) (*Cat, error)
+	UpdateOne(ctx context.Context, cat *Cat, id string) (*Cat, error)
 }

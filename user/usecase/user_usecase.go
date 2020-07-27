@@ -20,7 +20,7 @@ func NewUserUsecase(u domain.UserRepository, to time.Duration) domain.UserUsecas
 	}
 }
 
-func (user *userUsecase) Store(c context.Context, m *domain.User) (*domain.User, error) {
+func (user *userUsecase) InsertOne(c context.Context, m *domain.User) (*domain.User, error) {
 
 	ctx, cancel := context.WithTimeout(c, user.contextTimeout)
 	defer cancel()
@@ -29,7 +29,7 @@ func (user *userUsecase) Store(c context.Context, m *domain.User) (*domain.User,
 	m.CreatedAt = time.Now()
 	m.UpdatedAt = time.Now()
 
-	res, err := user.userRepo.Store(ctx, m)
+	res, err := user.userRepo.InsertOne(ctx, m)
 	if err != nil {
 		return res, err
 	}
@@ -37,12 +37,12 @@ func (user *userUsecase) Store(c context.Context, m *domain.User) (*domain.User,
 	return res, nil
 }
 
-func (user *userUsecase) GetOne(c context.Context, id string) (*domain.User, error) {
+func (user *userUsecase) FindOne(c context.Context, id string) (*domain.User, error) {
 
 	ctx, cancel := context.WithTimeout(c, user.contextTimeout)
 	defer cancel()
 
-	res, err := user.userRepo.GetOne(ctx, id)
+	res, err := user.userRepo.FindOne(ctx, id)
 	if err != nil {
 		return res, err
 	}
@@ -63,12 +63,12 @@ func (user *userUsecase) GetAllWithPage(c context.Context, rp int64, p int64, fi
 	return res, count, nil
 }
 
-func (user *userUsecase) Update(c context.Context, m *domain.User, id string) (*domain.User, error) {
+func (user *userUsecase) UpdateOne(c context.Context, m *domain.User, id string) (*domain.User, error) {
 
 	ctx, cancel := context.WithTimeout(c, user.contextTimeout)
 	defer cancel()
 
-	res, err := user.userRepo.Update(ctx, m, id)
+	res, err := user.userRepo.UpdateOne(ctx, m, id)
 	if err != nil {
 		return res, err
 	}

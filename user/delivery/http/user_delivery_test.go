@@ -20,7 +20,7 @@ import (
 	"github.com/bxcodec/go-clean-arch/domain/mocks"
 )
 
-func TestStore(t *testing.T) {
+func TestInsertOne(t *testing.T) {
 	mockUCase := new(mocks.UserUsecase)
 	mockUserRequest := &domain.User{
 		Name:     "vian",
@@ -39,7 +39,7 @@ func TestStore(t *testing.T) {
 	j, err := json.Marshal(tempMockUser)
 	assert.NoError(t, err)
 
-	mockUCase.On("Store", mock.Anything, mock.AnythingOfType("*domain.User")).Return(mockUserResponse, nil)
+	mockUCase.On("InsertOne", mock.Anything, mock.AnythingOfType("*domain.User")).Return(mockUserResponse, nil)
 
 	e := echo.New()
 	req, err := http.NewRequest(echo.POST, "/user", strings.NewReader(string(j)))
@@ -54,14 +54,14 @@ func TestStore(t *testing.T) {
 		UsrUsecase: mockUCase,
 	}
 
-	err = handler.Store(c)
+	err = handler.InsertOne(c)
 	require.NoError(t, err)
 
 	assert.Equal(t, http.StatusOK, rec.Code)
 	mockUCase.AssertExpectations(t)
 }
 
-func TestStoreFailed(t *testing.T) {
+func TestInsertOneFailed(t *testing.T) {
 	mockUCase := new(mocks.UserUsecase)
 	mockUserRequest := &domain.User{
 		Name:     "vian",
@@ -73,7 +73,7 @@ func TestStoreFailed(t *testing.T) {
 	j, err := json.Marshal(tempMockUser)
 	assert.NoError(t, err)
 
-	mockUCase.On("Store", mock.Anything, mock.AnythingOfType("*domain.User")).Return(mockUserResponse, errors.New("Unexpected"))
+	mockUCase.On("InsertOne", mock.Anything, mock.AnythingOfType("*domain.User")).Return(mockUserResponse, errors.New("Unexpected"))
 
 	e := echo.New()
 	req, err := http.NewRequest(echo.POST, "/user", strings.NewReader(string(j)))
@@ -88,14 +88,14 @@ func TestStoreFailed(t *testing.T) {
 		UsrUsecase: mockUCase,
 	}
 
-	err = handler.Store(c)
+	err = handler.InsertOne(c)
 	require.NoError(t, err)
 
 	assert.Equal(t, http.StatusInternalServerError, rec.Code)
 	mockUCase.AssertExpectations(t)
 }
 
-func TestGetOne(t *testing.T) {
+func TestFindOne(t *testing.T) {
 	mockUCase := new(mocks.UserUsecase)
 	mockUser := &domain.User{
 		ID:        primitive.NewObjectID(),
@@ -107,7 +107,7 @@ func TestGetOne(t *testing.T) {
 	}
 	UserID := mock.Anything
 
-	mockUCase.On("GetOne", mock.Anything, UserID).Return(mockUser, nil)
+	mockUCase.On("FindOne", mock.Anything, UserID).Return(mockUser, nil)
 
 	e := echo.New()
 	req, err := http.NewRequest(echo.GET, "/user", nil)
@@ -122,19 +122,19 @@ func TestGetOne(t *testing.T) {
 		UsrUsecase: mockUCase,
 	}
 
-	err = handler.GetOne(c)
+	err = handler.FindOne(c)
 	require.NoError(t, err)
 
 	assert.Equal(t, http.StatusOK, rec.Code)
 	mockUCase.AssertExpectations(t)
 }
 
-func TestGetOneFailed(t *testing.T) {
+func TestFindOneFailed(t *testing.T) {
 	mockUCase := new(mocks.UserUsecase)
 	mockUserFailed := &domain.User{}
 	UserID := mock.Anything
 
-	mockUCase.On("GetOne", mock.Anything, UserID).Return(mockUserFailed, errors.New("Unexpected"))
+	mockUCase.On("FindOne", mock.Anything, UserID).Return(mockUserFailed, errors.New("Unexpected"))
 
 	e := echo.New()
 	req, err := http.NewRequest(echo.GET, "/user", nil)
@@ -149,14 +149,14 @@ func TestGetOneFailed(t *testing.T) {
 		UsrUsecase: mockUCase,
 	}
 
-	err = handler.GetOne(c)
+	err = handler.FindOne(c)
 	require.NoError(t, err)
 
 	assert.Equal(t, http.StatusInternalServerError, rec.Code)
 	mockUCase.AssertExpectations(t)
 }
 
-func TestUpdate(t *testing.T) {
+func TestUpdateOne(t *testing.T) {
 	mockUCase := new(mocks.UserUsecase)
 	mockUserRequest := &domain.User{
 		Name:     "vian",
@@ -177,7 +177,7 @@ func TestUpdate(t *testing.T) {
 	j, err := json.Marshal(tempMockUser)
 	assert.NoError(t, err)
 
-	mockUCase.On("Update", mock.Anything, mock.AnythingOfType("*domain.User"), UserID).Return(mockUserResponse, nil)
+	mockUCase.On("UpdateOne", mock.Anything, mock.AnythingOfType("*domain.User"), UserID).Return(mockUserResponse, nil)
 
 	e := echo.New()
 	req, err := http.NewRequest(echo.PUT, "/user", strings.NewReader(string(j)))
@@ -192,7 +192,7 @@ func TestUpdate(t *testing.T) {
 		UsrUsecase: mockUCase,
 	}
 
-	err = handler.Update(c)
+	err = handler.UpdateOne(c)
 	require.NoError(t, err)
 
 	assert.Equal(t, http.StatusOK, rec.Code)
@@ -220,7 +220,7 @@ func TestUpdateFailed(t *testing.T) {
 	j, err := json.Marshal(tempMockUser)
 	assert.NoError(t, err)
 
-	mockUCase.On("Update", mock.Anything, mock.AnythingOfType("*domain.User"), UserID).Return(mockUserResponse, errors.New("Unexpected"))
+	mockUCase.On("UpdateOne", mock.Anything, mock.AnythingOfType("*domain.User"), UserID).Return(mockUserResponse, errors.New("Unexpected"))
 
 	e := echo.New()
 	req, err := http.NewRequest(echo.PUT, "/user", strings.NewReader(string(j)))
@@ -235,7 +235,7 @@ func TestUpdateFailed(t *testing.T) {
 		UsrUsecase: mockUCase,
 	}
 
-	err = handler.Update(c)
+	err = handler.UpdateOne(c)
 	require.NoError(t, err)
 
 	assert.Equal(t, http.StatusInternalServerError, rec.Code)

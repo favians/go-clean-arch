@@ -20,7 +20,7 @@ func NewCatUsecase(u domain.CatRepository, to time.Duration) domain.CatUsecase {
 	}
 }
 
-func (cat *catUsecase) Store(c context.Context, m *domain.Cat) (*domain.Cat, error) {
+func (cat *catUsecase) InsertOne(c context.Context, m *domain.Cat) (*domain.Cat, error) {
 
 	ctx, cancel := context.WithTimeout(c, cat.contextTimeout)
 	defer cancel()
@@ -29,7 +29,7 @@ func (cat *catUsecase) Store(c context.Context, m *domain.Cat) (*domain.Cat, err
 	m.CreatedAt = time.Now()
 	m.UpdatedAt = time.Now()
 
-	res, err := cat.catRepo.Store(ctx, m)
+	res, err := cat.catRepo.InsertOne(ctx, m)
 	if err != nil {
 		return res, err
 	}
@@ -37,12 +37,12 @@ func (cat *catUsecase) Store(c context.Context, m *domain.Cat) (*domain.Cat, err
 	return res, nil
 }
 
-func (cat *catUsecase) GetOne(c context.Context, id string) (*domain.Cat, error) {
+func (cat *catUsecase) FindOne(c context.Context, id string) (*domain.Cat, error) {
 
 	ctx, cancel := context.WithTimeout(c, cat.contextTimeout)
 	defer cancel()
 
-	res, err := cat.catRepo.GetOne(ctx, id)
+	res, err := cat.catRepo.FindOne(ctx, id)
 	if err != nil {
 		return res, err
 	}
@@ -63,12 +63,12 @@ func (cat *catUsecase) GetAllWithPage(c context.Context, rp int64, p int64, filt
 	return res, count, nil
 }
 
-func (cat *catUsecase) Update(c context.Context, m *domain.Cat, id string) (*domain.Cat, error) {
+func (cat *catUsecase) UpdateOne(c context.Context, m *domain.Cat, id string) (*domain.Cat, error) {
 
 	ctx, cancel := context.WithTimeout(c, cat.contextTimeout)
 	defer cancel()
 
-	res, err := cat.catRepo.Update(ctx, m, id)
+	res, err := cat.catRepo.UpdateOne(ctx, m, id)
 	if err != nil {
 		return res, err
 	}

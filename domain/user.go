@@ -17,16 +17,16 @@ type User struct {
 }
 
 type UserRepository interface {
-	Store(ctx context.Context, u *User) (*User, error)
-	GetOne(ctx context.Context, id string) (*User, error)
+	InsertOne(ctx context.Context, u *User) (*User, error)
+	FindOne(ctx context.Context, id string) (*User, error)
 	GetAllWithPage(ctx context.Context, rp int64, p int64, filter interface{}, setsort interface{}) ([]User, int64, error)
-	Update(ctx context.Context, user *User, id string) (*User, error)
+	UpdateOne(ctx context.Context, user *User, id string) (*User, error)
 	GetByCredential(ctx context.Context, username string, password string) (*User, error)
 }
 
 type UserUsecase interface {
-	Store(ctx context.Context, u *User) (*User, error)
-	GetOne(ctx context.Context, id string) (*User, error)
+	InsertOne(ctx context.Context, u *User) (*User, error)
+	FindOne(ctx context.Context, id string) (*User, error)
 	GetAllWithPage(ctx context.Context, rp int64, p int64, filter interface{}, setsort interface{}) ([]User, int64, error)
-	Update(ctx context.Context, user *User, id string) (*User, error)
+	UpdateOne(ctx context.Context, user *User, id string) (*User, error)
 }
