@@ -3,19 +3,18 @@ package mongo
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/bxcodec/go-clean-arch/domain"
+	"github.com/bxcodec/go-clean-arch/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type mongoRepository struct {
-	DB         *mongo.Database
-	Collection *mongo.Collection
+	DB         mongo.Database
+	Collection mongo.Collection
 }
 
 const (
@@ -23,7 +22,7 @@ const (
 	collectionName = "user"
 )
 
-func NewMongoRepository(DB *mongo.Database) domain.UserRepository {
+func NewMongoRepository(DB mongo.Database) domain.UserRepository {
 	return &mongoRepository{DB, DB.Collection(collectionName)}
 }
 
@@ -42,29 +41,29 @@ func (m *mongoRepository) InsertOne(ctx context.Context, user *domain.User) (*do
 
 func (m *mongoRepository) FindOne(ctx context.Context, id string) (*domain.User, error) {
 	var (
-		user *domain.User
+		user domain.User
 		err  error
 	)
 
 	idHex, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return user, err
+		return &user, err
 	}
 
 	err = m.Collection.FindOne(ctx, bson.M{"_id": idHex}).Decode(&user)
 	if err != nil {
-		return user, err
+		return &user, err
 	}
 
-	return user, nil
+	return &user, nil
 }
 
 func (m *mongoRepository) GetAllWithPage(ctx context.Context, rp int64, p int64, filter interface{}, setsort interface{}) ([]domain.User, int64, error) {
 
 	var (
-		permissions []domain.User
-		skip        int64
-		opts        *options.FindOptions
+		user []domain.User
+		skip int64
+		opts *options.FindOptions
 	)
 
 	skip = (p * rp) - rp
@@ -93,17 +92,17 @@ func (m *mongoRepository) GetAllWithPage(ctx context.Context, rp int64, p int64,
 	if cursor == nil {
 		return nil, 0, fmt.Errorf("nil cursor value")
 	}
-	err = cursor.All(ctx, &permissions)
+	err = cursor.All(ctx, &user)
 	if err != nil {
 		return nil, 0, err
 	}
 
 	count, err := m.Collection.CountDocuments(ctx, filter)
 	if err != nil {
-		return permissions, 0, err
+		return user, 0, err
 	}
 
-	return permissions, count, err
+	return user, count, err
 }
 
 func (m *mongoRepository) UpdateOne(ctx context.Context, user *domain.User, id string) (*domain.User, error) {
@@ -138,7 +137,7 @@ func (m *mongoRepository) UpdateOne(ctx context.Context, user *domain.User, id s
 
 func (m *mongoRepository) GetByCredential(ctx context.Context, username string, password string) (*domain.User, error) {
 	var (
-		user *domain.User
+		user domain.User
 		err  error
 	)
 
@@ -146,13 +145,11 @@ func (m *mongoRepository) GetByCredential(ctx context.Context, username string, 
 		"username": username,
 		"password": password,
 	}
-	log.Println(credential)
 
 	err = m.Collection.FindOne(ctx, credential).Decode(&user)
 	if err != nil {
-		return user, err
+		return &user, err
 	}
-	log.Println(user)
 
-	return user, nil
+	return &user, nil
 }

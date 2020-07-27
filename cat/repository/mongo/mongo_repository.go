@@ -6,15 +6,15 @@ import (
 	"time"
 
 	"github.com/bxcodec/go-clean-arch/domain"
+	"github.com/bxcodec/go-clean-arch/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type mongoRepository struct {
-	DB         *mongo.Database
-	Collection *mongo.Collection
+	DB         mongo.Database
+	Collection mongo.Collection
 }
 
 const (
@@ -22,7 +22,7 @@ const (
 	collectionName = "cat"
 )
 
-func NewMongoRepository(DB *mongo.Database) domain.CatRepository {
+func NewMongoRepository(DB mongo.Database) domain.CatRepository {
 	return &mongoRepository{DB, DB.Collection(collectionName)}
 }
 
@@ -41,29 +41,29 @@ func (m *mongoRepository) InsertOne(ctx context.Context, cat *domain.Cat) (*doma
 
 func (m *mongoRepository) FindOne(ctx context.Context, id string) (*domain.Cat, error) {
 	var (
-		cat *domain.Cat
+		cat domain.Cat
 		err error
 	)
 
 	idHex, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return cat, err
+		return &cat, err
 	}
 
 	err = m.Collection.FindOne(ctx, bson.M{"_id": idHex}).Decode(&cat)
 	if err != nil {
-		return cat, err
+		return &cat, err
 	}
 
-	return cat, nil
+	return &cat, nil
 }
 
 func (m *mongoRepository) GetAllWithPage(ctx context.Context, rp int64, p int64, filter interface{}, setsort interface{}) ([]domain.Cat, int64, error) {
 
 	var (
-		permissions []domain.Cat
-		skip        int64
-		opts        *options.FindOptions
+		cat  []domain.Cat
+		skip int64
+		opts *options.FindOptions
 	)
 
 	skip = (p * rp) - rp
@@ -92,17 +92,17 @@ func (m *mongoRepository) GetAllWithPage(ctx context.Context, rp int64, p int64,
 	if cursor == nil {
 		return nil, 0, fmt.Errorf("nil cursor value")
 	}
-	err = cursor.All(ctx, &permissions)
+	err = cursor.All(ctx, &cat)
 	if err != nil {
 		return nil, 0, err
 	}
 
 	count, err := m.Collection.CountDocuments(ctx, filter)
 	if err != nil {
-		return permissions, 0, err
+		return cat, 0, err
 	}
 
-	return permissions, count, err
+	return cat, count, err
 }
 
 func (m *mongoRepository) UpdateOne(ctx context.Context, cat *domain.Cat, id string) (*domain.Cat, error) {

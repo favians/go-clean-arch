@@ -30,6 +30,7 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v0.0.0-20170224212429-dcecefd839c4 // indirect
 	github.com/vektra/mockery v1.1.2 // indirect
+	go.elastic.co/apm/module/apmmongo v1.8.0
 	go.mongodb.org/mongo-driver v1.3.5
 	go.uber.org/zap v1.15.0
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e

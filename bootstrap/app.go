@@ -3,8 +3,8 @@ package bootstrap
 import (
 	"database/sql"
 
+	"github.com/bxcodec/go-clean-arch/mongo"
 	"github.com/spf13/viper"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var (
@@ -14,7 +14,7 @@ var (
 type Application struct {
 	Config *viper.Viper
 	MySql  *sql.DB
-	Mongo  *mongo.Client
+	Mongo  mongo.Client
 }
 
 func init() {

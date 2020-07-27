@@ -6,12 +6,10 @@ import (
 	"log"
 	"time"
 
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"github.com/bxcodec/go-clean-arch/mongo"
 )
 
-func InitMongoDatabase() *mongo.Client {
+func InitMongoDatabase() mongo.Client {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -25,7 +23,7 @@ func InitMongoDatabase() *mongo.Client {
 		mongodbURI = fmt.Sprintf("mongodb://%s:%s/%s", dbHost, dbPort, dbName)
 	}
 
-	client, err := mongo.NewClient(options.Client().ApplyURI(mongodbURI))
+	client, err := mongo.NewClient(mongodbURI)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -35,7 +33,7 @@ func InitMongoDatabase() *mongo.Client {
 		log.Fatal(err)
 	}
 
-	err = client.Ping(ctx, readpref.Primary())
+	err = client.Ping(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
