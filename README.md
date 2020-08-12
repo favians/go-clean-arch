@@ -1,4 +1,4 @@
-# go-clean-arch
+# go-clean-arch with Mongo DB inside for new learner
 
 ## Changelog
 - **v1**: checkout to the [v1 branch](https://github.com/bxcodec/go-clean-arch/tree/v1) <br>
@@ -40,7 +40,7 @@ The original explanation about this project's structure  can read from this medi
 It may different already, but the concept still the same in application level, also you can see the change log from v1 to current version in Master.
 
 ### How To Run This Project
-> Make Sure you have run the article.sql in your mysql
+> Make Sure you have mongoDB installed on your device
 
 
 Since the project already use Go Module, I recommend to put the source code in any folder but GOPATH.
