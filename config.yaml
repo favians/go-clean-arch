@@ -1,5 +1,5 @@
 app:
-  name: Lucent
+  name: Golang_starter
   debug: true
 
 server: 
